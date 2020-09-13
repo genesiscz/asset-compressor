@@ -1,3 +1,6 @@
+#Asset Compressor
+A very simple utility to compress all your assets into Brotli &amp; Gzip ready to be served via webserver.
+
 #Usage
 
 ```js
