@@ -21,9 +21,11 @@ const defaultOptions = {
     onBrotliProcessed: null,
     onGzipProcessed: null,
 };
+
 const writeFile = util.promisify(fs.writeFile);
 const stat = util.promisify(fs.stat);
 const readFile = util.promisify(fs.readFile);
+
 // as of https://stackoverflow.com/a/5827895/1044146
 const walk = function(dir, done) {
     var results = [];
@@ -64,9 +66,9 @@ const procBrotli = async (filePath, size, options) => {
     return new Promise(async (resolve, reject) => {
         const result = brotli.compress(await readFile(filePath), brotliSettings);
         if (result === null) {
-            return resolve(skipped(filePath+".br", "result", size));
+            return resolve(skipped(filePath + ".br", "result", size));
         }
-        const ratio = (result.length / size);
+        const ratio = result.length / size;
         const ratioPerc = ratio * 100;
 
         let brotliExist;
@@ -83,9 +85,8 @@ const procBrotli = async (filePath, size, options) => {
             await writeFile(filePath + ".br", result);
             return resolve(completed(filePath + ".br", size, result.length));
         }
-    })
+    });
 };
-
 
 const procGzip = (filePath, size, options) => {
     return new Promise((resolve, reject) => {
@@ -100,7 +101,7 @@ const procGzip = (filePath, size, options) => {
             .pipe(writeStream)
             .on("finish", async () => {
                 const stats2 = await stat(filePath + ".gz");
-                const ratio = (stats2["size"] / size);
+                const ratio = stats2["size"] / size;
                 const ratioPerc = ratio * 100;
                 if (ratio > options.minRatio) {
                     const skippedObj = skipped(filePath + ".gz", "ratio", size, stats2["size"]);
@@ -121,12 +122,12 @@ const procFile = async (filePath, options) => {
         const size = stats["size"];
         if (size < options.threshold) {
             skipped(filePath, "size", size);
-            return ({
+            return {
                 filePath: filePath,
                 skipped: true,
                 brotli: null,
-                gzip: null
-            });
+                gzip: null,
+            };
         }
 
         const resultGzip = await procGzip(filePath, size, options);
@@ -139,22 +140,23 @@ const procFile = async (filePath, options) => {
             options.onBrotliProcessed(resultBrotli);
         }
 
-        return ({
+        return {
             filePath,
             skipped: false,
             brotli: resultBrotli,
             gzip: resultGzip,
-        });
+        };
     }
-    return ({
+    return {
         filePath,
         skipped: true,
         brotli: null,
         gzip: null,
-    });
+    };
 };
+
 function completed(filePath, size1, size2, type) {
-    const ratio = (size2 / size1);
+    const ratio = size2 / size1;
     const ratioPerc = ratio * 100;
     const ratioText = ratioPerc + "% == " + kb(size1) + "kB -> " + kb(size2) + "kB";
 
@@ -169,7 +171,7 @@ function completed(filePath, size1, size2, type) {
 }
 
 const skipped = (filePath, reason, size1, size2) => {
-    const ratio = (size2 / size1);
+    const ratio = size2 / size1;
     const ratioPercent = ratio * 100;
     console.log("[skip:" + reason + "] " + filePath + ": " + kb(size1) + "kB" + (size2 ? " -> " + kb(size2) + "kB (ratio " + ratio + "%)" : ""));
     return {
@@ -177,7 +179,7 @@ const skipped = (filePath, reason, size1, size2) => {
         initialSize: size1,
         compressedSize: size2 || null,
         ratio: ratio || null,
-        ratioPercent: ratioPercent || null
+        ratioPercent: ratioPercent || null,
     };
 };
 
