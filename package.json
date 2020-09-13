@@ -1,0 +1,38 @@
+{
+  "name": "asset-compressor",
+  "version": "1.0.0",
+  "description": "A very simple utility to compress all your assets into Brotli & Gzip compressed files ready to be served via webserver.",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "bundt",
+    "pretest": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/genesiscz/asset-compressor.git"
+  },
+  "homepage": "https://github.com/genesiscz/asset-compressor",
+  "engines": {
+    "node": ">=6"
+  },
+  "keywords": [
+    "brotli",
+    "webpack",
+    "zlib",
+    "gzip"
+  ],
+  "author": "genesiscz <martin@foltyn.dev>",
+  "license": "MIT",
+  "dependencies": {
+    "brotli": "^1.3.2",
+    "fs": "0.0.1-security",
+    "path": "^0.12.7",
+    "zlib": "^1.0.5"
+  },
+  "devDependencies": {
+    "bundt": "^1.1.1"
+  },
+  "bugs": {
+    "url": "https://github.com/genesiscz/asset-compressor/issues"
+  }
+}
