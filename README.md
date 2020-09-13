@@ -1,6 +1,8 @@
 # Asset Compressor
 A very simple utility to compress all your assets into Brotli &amp; Gzip ready to be served via webserver.
 
+Repository is open for issues & pull requests
+
 # Usage
 
 ```js
@@ -21,6 +23,25 @@ const options = {
 };
 
 compressAssets(options).then(() => console.log("Completed!"));
+```
+
+# Options:
+```js
+const defaultOptions = {
+    dirs: [],
+    threshold: 0,
+    minRatio: 1.0,
+    brotliSettings: {
+        extension: "br",
+        skipLarger: true,
+        mode: 0, // 0 = generic, 1 = text, 2 = font (WOFF2)
+        quality: 11, // 0 - 11,
+        lgwin: 22, // default
+    },
+    onProcessed: null,
+    onBrotliProcessed: null,
+    onGzipProcessed: null,
+};
 ```
 
 - The application will traverse through the directories given in `options.dirs` recursively and find all assets that can be compressed with better ratio than `options.minRatio`
